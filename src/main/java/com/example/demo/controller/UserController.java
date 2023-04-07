@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("/api/user")
 //@CrossOrigin(origins = "http://localhost:3000/", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-@CrossOrigin(origins = "https://full-stack-fe.vercel.app/", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+@CrossOrigin(origins = {"https://full-stack-fe.vercel.app/", "http://localhost:3000/"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class UserController {
 
     @Autowired
