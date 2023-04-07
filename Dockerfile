@@ -1,21 +1,23 @@
-# Use the official maven/Java 8 image to create a build artifact: https://hub.docker.com/_/maven
-FROM maven:3.9.1-jdk-18-alpine as builder
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk-alpine
 
-# Copy local code to the container image.
+# Set the working directory to /app
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
 
-# Build a release artifact.
-RUN mvn package -DskipTests
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Use the Official OpenJDK image for a lean production stage of our multi-stage build.
-# https://hub.docker.com/_/openjdk
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM openjdk:18-jre-alpine
+COPY src/main/resources/serviceAccountKey.json /app
 
-# Copy the jar to the production image from the builder stage.
-COPY --from=builder /app/target/demo-0.0.1-*.jar /demo-0-0.1-SNAPSHOT.jar
+# Install any needed dependencies specified in pom.xml
+RUN chmod +x mvnw && \
+    ./mvnw dependency:go-offline
 
-# Run the web service on container startup.
-CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/demo-0-0.1-SNAPSHOT.jar"]
+# Build the project
+RUN ./mvnw package
+
+# Expose port 8080 for the application
+EXPOSE 8080
+
+# Set the default command to run when the container starts
+CMD ["java", "-jar", "./target/demo-0.0.1-SNAPSHOT.jar"]

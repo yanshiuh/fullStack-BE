@@ -1,0 +1,1 @@
+gcloud run deploy test-spring-app --image=gcr.io/fullstack-e0d1e/livefullstackapp:latest
